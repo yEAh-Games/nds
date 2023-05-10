@@ -1,0 +1,32 @@
+---
+---
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Full-screen player | YGP</title>
+<link rel="icon" type="image/x-icon" href="https://cdn.yeahgames.net/img/branding/logos/default/logo.png">
+<style>
+    html, body {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+    }
+    /* Set the iframe element to cover the entire screen */
+    iframe {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      border: none;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+<iframe allowfullscreen src="https://nds.g.arcade.yeahgames.net/published/{{page.url|remove:'https'|remove:'/'|remove:'published'|remove:'player.yeahgames.net/games'|remove:':'|remove:'play'|remove:'games'|remove:'details'|remove:'full.html'}}/run?fullscreen=true"></iframe>
+</body>
+</html>
