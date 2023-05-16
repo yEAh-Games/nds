@@ -1,52 +1,160 @@
-<title>yEAh NDS emulator src</title>
+<title>yEAh NDS emulator (run)</title>
 <html>
-<body>
-    <center>
-<desmond-player style="  position: absolute;
-top: 50%;
-left: 50%;
-transform: translate(-50%, 15%);" id="player"></desmond-player></center>
-<script src="/dist/desmond.min.js"></script>
-<style>
+
+<head>
+  {% include gtag.js %}
+
+  <style>
     body {
-        transform: scale(115%);
-        background-color: #15181f;
+      transform: scale(115%);
+      background-color: #15181f;
     }
-</style>
 
-<script src="/zip/dist/jszip.js"></script>
-<script>
-window.onload = function() {
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', 'game.zip', true);
-  xhr.responseType = 'blob';
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #040615;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      color: #fff;
+      font-size: 20px;
+    }
 
-  xhr.onload = function() {
-    if (xhr.status === 200) {
-      var zipFile = xhr.response;
+    .loading-gif {
+      width: 64px;
+      height: 64px;
+    }
+  </style>
+</head>
 
-      // new object
-      var zip = new JSZip();
+<body>
+  <!--Loader-->
+  <div id="overlay" style="display: none;">
+    <img src="/assets/loading.gif" alt="Loading..." class="loading-gif">
+    &#160;&#160;Loading your game...
+  </div>
 
-      // load
-      zip.loadAsync(zipFile).then(function(zip) {
+  <!--Player-->
+  <center>
+  <desmond-player style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, 15%);"
+  id="player"></desmond-player>
+  </center>
 
-        // retrieve from archive
-        zip.file("game.nds").async("blob").then(function(file) {
+  <!--Scripts-->
+  <script src="/dist/desmond.min.js"></script>
+  <script src="/zip/dist/jszip.js"></script>
+  <script>
+    window.onload = function () {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', 'game.zip', true);
+      xhr.responseType = 'blob';
 
-          // player.loadurl
-          var objectUrl = URL.createObjectURL(file);
-          document.getElementById("player").loadURL(objectUrl);
-        });
+      xhr.onload = function () {
+        if (xhr.status === 200) {
+          var zipFile = xhr.response;
+
+          // new zip
+          var zip = new JSZip();
+
+          // load
+          zip.loadAsync(zipFile).then(function (zip) {
+
+            // retrieve from archive
+            zip.file("game.nds").async("blob").then(function (file) {
+
+              // player.loadurl
+              var objectUrl = URL.createObjectURL(file);
+              document.getElementById("player").loadURL(objectUrl);
+            });
+          });
+        }
+      };
+
+      xhr.send();
+    };
+  </script>
+
+  <script>
+    const resourceUrl = "game.zip";
+
+    function showOverlay() {
+      document.getElementById("overlay").style.display = "flex";
+    }
+
+    function hideOverlay() {
+      document.getElementById("overlay").style.display = "none";
+    }
+
+    function updateProgress(loaded, total) {
+      const percentage = Math.round((loaded / total) * 100);
+      const progressBar = document.querySelector("#progress-bar .progress-bar-fill");
+      progressBar.style.width = percentage + "%";
+    }
+
+    // on loading failure
+    function showFailureMessage(errorCode) {
+      const overlay = document.getElementById("overlay");
+      if (errorCode !== 200) {
+        const errorMessage = `<center><div>Failed to load the resource.<br>Error Code: ${errorCode}<br><br><button type='button' onclick="toggleText()">Help</button><p id='demo' style='display: none;width:30%'>If you're on a school Chromebook, you most likely can't load the game because its storage is full and thus doesn't have enough allocated memory to load large files in the browser. You can fix this by following the tutorial on the game page's help button, or by visiting <a href="https://arcade.yeahgames.net/tools/help/chromebook">https://arcade.yeahgames.net/tools/help/chromebook</a></P></div></center>`;
+        overlay.innerHTML = errorMessage;
+      } else {
+        overlay.innerHTML = "Resource loaded successfully!";
+      }
+    }
+
+    function toggleHiddenText() {
+      const hiddenText = document.querySelector(".hidden-text");
+      hiddenText.style.display = hiddenText.style.display === "none" ? "block" : "none";
+    }
+
+    function checkResourceLoading() {
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", resourceUrl, true);
+      xhr.responseType = "blob";
+
+      xhr.addEventListener("load", function () {
+        if (xhr.status === 200) {
+          hideOverlay();
+        } else {
+          const errorCode = xhr.status;
+          showFailureMessage(errorCode);
+        }
       });
+
+      xhr.addEventListener("progress", function (event) {
+        if (event.lengthComputable) {
+          updateProgress(event.loaded, event.total);
+        }
+      });
+
+      xhr.addEventListener("error", function () {
+        const errorCode = xhr.status;
+        showFailureMessage(errorCode);
+      });
+
+      xhr.send();
     }
-  };
+    showOverlay();
+    checkResourceLoading();
+  </script>
 
-  xhr.send();
-};
-</script>
-
-
+  <!--load failure help div-->
+  <script>
+    function toggleText() {
+      var text = document.getElementById("demo");
+      if (text.style.display === "none") {
+        text.style.display = "block";
+      } else {
+        text.style.display = "none";
+      }
+    }
+  </script>
 
 </body>
+
 </html>
