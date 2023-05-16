@@ -1,0 +1,5 @@
+title: Nintendo DS Host | The yEAh Games Arcade
+
+plugins:
+ - jekyll-sitemap
+ - jekyll-seo-tag
