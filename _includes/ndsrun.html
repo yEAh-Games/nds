@@ -46,140 +46,113 @@ window.onload = function() {
 };
 </script>
 
-<!--
-
-<style>
-    .wrapper1 a {
-      display: inline-block;
-      text-decoration: none;
-      padding: 15px;
-      background-color: #fff;
-      border-radius: 3px;
-      text-transform: uppercase;
-      color: #585858;
-      font-family: 'Roboto', sans-serif;
-    }
-    
-    .modal1 {
-      visibility: hidden;
-      opacity: 0;
-      position: absolute;
+<head>
+  <style>
+   #overlay {
+      position: fixed;
       top: 0;
-      right: 0;
-      bottom: 0;
       left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #0c0e14;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(77, 77, 77, .7);
-      transition: all .4s;
+      z-index: 9999;
+      color: #fff;
+      font-size: 20px;
     }
-    
-    .modal1:target {
-      visibility: visible;
-      opacity: 1;
+    .loading-gif {
+      width: 55px;
+      height: 55px;
     }
-    
-    .modal__content {
-      border-radius: 4px;
-      position: relative;
-      width: 500px;
-      max-width: 90%;
-      background: #fff;
-      padding: 1em 2em;
+    .hidden-text {
+      display: none;
     }
-    
-    .modal__footer {
-      text-align: right;
-      a {
-        color: #585858;
-      }
-      i {
-        color: #d02d2c!important;
-      }
-    }
-    .modal__close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      color: #585858!important;
-      text-decoration: none!important;
-    }
-    
-            </style>
-    
-                <a style="transform: scale(100%);" href="#help" style="  position: fixed;
-                bottom: 0;
-                right: 0;" ><button style="background-color: #4CAF50;
-                    color: white;
-                    padding: 10px 20px;
-                    text-align: center;
-                    text-decoration: none;
-                    display: inline-block;
-                    border-radius: 6px;
-                    transition: background-color 0.3s ease;
-                    background-image: linear-gradient(#ff4747, #f08282);">
-      Help
-    </button>
-    </a>
-            </a>
-            
-            <div style="transform: scale(0%);" id="help" class="modal1">
-                <div class="modal__content" style="color:black!important">
-                    <h1>GBA Emulator Help</h1>
-            <h4>Controls</h4>
-                    <table style="color:black!important">
-                        <tr>
-                        <td>Up</td>
-                        <td>W</td>
-                        </tr>
-                        <tr>
-                        <td>Down</td>
-                        <td>S</td>
-                        </tr>
-                        <tr>
-                        <td>Left</td>
-                        <td>A</td>
-                        </tr>
-                        <tr>
-                        <td>Right</td>
-                        <td>D</td>
-                        </tr>
-                        <tr>
-                        <td>A</td>
-                        <td>K</td>
-                        </tr>
-                        <tr>
-                        <td>B</td>
-                        <td>L</td>
-                        </tr>
-                        <tr>
-                        <td>L</td>
-                        <td>I</td>
-                        </tr>
-                        <tr>
-                        <td>R</td>
-                        <td>O</td>
-                        </tr>
-                        <tr>
-                        <td>Start</td>
-                        <td>Enter</td>
-                        </tr>
-                        <tr>
-                        <td>Select</td>
-                        <td>Shift</td>
-                        </tr>
-                        </table>
-            
-                    <div class="modal__footer" style="color:black!important">
-                        See <a style="color:#ff4747" href="https://docs.yeahgames.net">the docs</a> to learn more.
-                    </div>
-            
-                    <a href="#" class="modal__close">&times;</a>
-                </div>
-            </div>
-            End help modal-->
+  </style>
+    <head>
 
+</head>
+<body>
+
+  <script>
+    const dropdown = document.getElementById('dropdown');
+    const hiddenContent = document.getElementById('hiddenContent');
+
+    dropdown.addEventListener('change', function() {
+      if (dropdown.value !== '') {
+        hiddenContent.style.display = 'block';
+      } else {
+        hiddenContent.style.display = 'none';
+      }
+    });
+  </script>
+  </style>
+</head>
+<body>
+
+  <div id="overlay" style="display: none;">
+    <img src="https://media.tenor.com/On7kvXhzml4AAAAj/loading-gif.gif" alt="Loading..." class="loading-gif">&#160;
+    Loading your game....
+  </div>
+
+  <!--Loader JS-->
+  <script>
+    const resourceUrl = "game.zip";
+    function showOverlay() {
+      document.getElementById("overlay").style.display = "flex";
+    }
+    function hideOverlay() {
+      document.getElementById("overlay").style.display = "none";
+    }
+
+    function updateProgress(loaded, total) {
+      const percentage = Math.round((loaded / total) * 100);
+      const progressBar = document.querySelector("#progress-bar .progress-bar-fill");
+      progressBar.style.width = percentage + "%";
+    }
+
+    function showFailureMessage(errorCode) {
+      const overlay = document.getElementById("overlay");
+      overlay.innerHTML = `<center><div>Failed to load the resource.<br>Error Code: ${errorCode} <br><br><button type='button' onclick="toggleText()">Help</button><p id='demo' style='display: none;width:30%'>If you're on a school Chromebook, you most likely can't load the game because its storage is full and thus doesn't have enough allocated memory. You can fix this by following the tutorial on the game page's help button, or by visiting <a href="https://arcade.yeahgames.net/tools/help/chromebook">https://arcade.yeahgames.net/tools/help/chromebook</a></P></div></center>`;
+    }
+
+    function checkResourceLoading() {
+      const resource = new Image();
+      resource.src = resourceUrl;
+
+      resource.addEventListener("load", function () {
+        hideOverlay();
+      });
+
+      resource.addEventListener("progress", function (event) {
+        if (event.lengthComputable) {
+          updateProgress(event.loaded, event.total);
+        }
+      });
+
+      resource.addEventListener("error", function (event) {
+        let errorCode = "Unknown";
+        if (event.target && event.target.error) {
+          errorCode = event.target.error.code;
+        }
+        showFailureMessage(errorCode);
+      });
+    }
+    showOverlay();
+    checkResourceLoading();
+  </script>
+  <script>
+    function toggleText() {
+      var text = document.getElementById("demo");
+      if (text.style.display === "none") {
+        text.style.display = "block";
+      } else {
+        text.style.display = "none";
+      }
+    }
+    </script>
+</body>
 
 </body>
 </html>
