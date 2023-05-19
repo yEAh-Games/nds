@@ -17,7 +17,7 @@
 
   <!--Player-->
   <center>
-    <desmond-player style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, 15%);"
+    <desmond-player style="position: absolute;top: 0%;left: 50%;transform: translate(-50%, 0%);"
       id="player"></desmond-player>
   </center>
 
@@ -33,6 +33,31 @@
   <script src="/dist/desmond.min.js"></script>
   <script src="/zip/dist/jszip.js"></script>
   <script src="/assets/game.js"></script>
+  <script>
+// Wait for the page to load
+document.addEventListener('DOMContentLoaded', function() {
+  // Find the canvas element with the id "top"
+  var topCanvas = document.getElementById('top');
+  
+  // Check if the top canvas element exists
+  if (topCanvas) {
+    // Set the width and height attributes
+    topCanvas.setAttribute('width', '496.7424');
+    topCanvas.setAttribute('height', '372.5568');
+  }
+  
+  // Find the canvas element with the id "bottom"
+  var bottomCanvas = document.getElementById('bottom');
+  
+  // Check if the bottom canvas element exists
+  if (bottomCanvas) {
+    // Set the width and height attributes
+    bottomCanvas.setAttribute('width', '496.7424');
+    bottomCanvas.setAttribute('height', '372.5568');
+  }
+});
+
+  </script>
 </body>
 
 </html>
