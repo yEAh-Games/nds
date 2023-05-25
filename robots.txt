@@ -1,0 +1,4 @@
+Sitemap: https://nds.g.arcade.yeahgames.net/sitemap.xml
+
+User-agent: *
+Disallow: /zip/*
